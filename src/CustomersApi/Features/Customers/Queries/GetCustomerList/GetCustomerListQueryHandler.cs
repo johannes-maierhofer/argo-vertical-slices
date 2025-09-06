@@ -14,6 +14,7 @@ public class GetCustomerListQueryHandler(
     {
         var result = await dbContext
             .Customers
+            .OrderBy(c => c.LastName)
             .Select(c => new CustomerListItem(
                 c.Id,
                 c.FirstName,
