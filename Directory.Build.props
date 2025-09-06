@@ -1,0 +1,12 @@
+﻿<Project>
+  <PropertyGroup>
+    <TargetFrameworkVersion>net9.0</TargetFrameworkVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+	<AssemblyName>Argo.VS.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>Argo.VS.$(MSBuildProjectName)</RootNamespace>
+	<NoWarn>CS8618;NU1701;NU1608;NU1902;CA1036;SA1402;CA2225;SA1128;CA1515</NoWarn>
+  </PropertyGroup>
+</Project>

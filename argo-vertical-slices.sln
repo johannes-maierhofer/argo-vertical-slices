@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_SolutionItems", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B2206288-31D4-45A2-AC8A-B0356541B958}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{8CEBB58D-C361-408A-9B5B-A6D3016EFDD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomersApi", "src\CustomersApi\CustomersApi.csproj", "{B18DEA98-BB5C-E7D6-8F5B-AA6BD326D2D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B18DEA98-BB5C-E7D6-8F5B-AA6BD326D2D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B18DEA98-BB5C-E7D6-8F5B-AA6BD326D2D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B18DEA98-BB5C-E7D6-8F5B-AA6BD326D2D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B18DEA98-BB5C-E7D6-8F5B-AA6BD326D2D8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B18DEA98-BB5C-E7D6-8F5B-AA6BD326D2D8} = {B2206288-31D4-45A2-AC8A-B0356541B958}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE9AE4B1-F1AD-4BB8-B606-9C4341C0FE48}
+	EndGlobalSection
+EndGlobal
