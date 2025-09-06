@@ -7,16 +7,9 @@ var builder = WebApplication
     .CreateBuilder(args)
     .ConfigureApplicationBuilder();
 
-// builder.Services.AddOpenApi();
-
 var app = builder
     .Build()
     .ConfigureApplication();
-
-if (app.Environment.IsDevelopment())
-{
-    // app.MapOpenApi();
-}
 
 if (app.Environment.IsDevelopment())
 {

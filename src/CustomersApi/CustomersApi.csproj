@@ -16,6 +16,8 @@
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" />
 	  <PackageReference Include="Scrutor" />
+	  <PackageReference Include="Serilog.AspNetCore" />
+	  <PackageReference Include="Serilog.Sinks.Console" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
 

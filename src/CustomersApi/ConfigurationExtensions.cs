@@ -15,6 +15,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 
+using Serilog;
+using Serilog.Events;
+
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 public static class ConfigurationExtensions
@@ -23,31 +26,33 @@ public static class ConfigurationExtensions
     {
         var assembly = typeof(ApiRoot).Assembly;
 
+        builder.AddCustomSerilog();
+
         builder.AddMinimalEndpoints(assemblies: assembly);
 
         builder.Services
             .AddHttpContextAccessor()
             .AddProblemDetails()
             .AddValidatorsFromAssembly(typeof(ApiRoot).Assembly)
-            .AddCustomMediatr()
             .AddPersistence(builder.Configuration)
+            .AddCustomMediatr()
+            .AddCustomApiVersioning()
             .AddCustomSwagger(o =>
             {
                 o.SwaggerDoc("v1", new OpenApiInfo { Version = "1.0.0", Title = "Customers API V1" });
-            })
-            .AddCustomApiVersioning();
+            });
 
         return builder;
     }
 
     public static WebApplication ConfigureApplication(this WebApplication app)
     {
-        //app.UseSerilogRequestLogging(cfg =>
-        //{
-        //    cfg.GetLevel = LogHelper.GetCustomLogEventLevel;
-        //});
-
         app.UseCustomProblemDetails();
+
+        app.UseSerilogRequestLogging(cfg =>
+        {
+            cfg.GetLevel = GetCustomLogEventLevel;
+        });
 
         app.UseHttpsRedirection();
 
@@ -60,6 +65,22 @@ public static class ConfigurationExtensions
         app.MapGet("/", x => x.Response.WriteAsync("Customers Api"));
 
         return app;
+    }
+
+    private static void AddCustomSerilog(this WebApplicationBuilder builder)
+    {
+        builder.Host.UseSerilog((ctx, services, cfg) =>
+        {
+            cfg.MinimumLevel.Is(LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                .MinimumLevel.Override("System", LogEventLevel.Warning)
+                .Enrich.FromLogContext()
+                .Enrich.WithProperty("Application", "Customers.Api")
+                .Enrich.WithProperty("Environment", ctx.HostingEnvironment.EnvironmentName)
+                .ReadFrom.Services(services);
+
+            cfg.WriteTo.Console();
+        });
     }
 
     private static IServiceCollection AddPersistence(
@@ -135,7 +156,7 @@ public static class ConfigurationExtensions
         return services;
     }
 
-    private static IApplicationBuilder UseCustomSwagger(this WebApplication app)
+    private static void UseCustomSwagger(this WebApplication app)
     {
         app.UseSwagger();
 
@@ -152,11 +173,9 @@ public static class ConfigurationExtensions
                     options.SwaggerEndpoint(url, name);
                 }
             });
-
-        return app;
     }
 
-    private static void AddCustomApiVersioning(this IServiceCollection services)
+    private static IServiceCollection AddCustomApiVersioning(this IServiceCollection services)
     {
         services.AddApiVersioning(o =>
             {
@@ -169,5 +188,34 @@ public static class ConfigurationExtensions
                 o.GroupNameFormat = "'v'V";
                 o.SubstituteApiVersionInUrl = true;
             });
+
+        return services;
+    }
+
+    private static LogEventLevel GetCustomLogEventLevel(HttpContext ctx, double timeout, Exception? ex)
+    {
+        if (ex != null)
+        {
+            return LogEventLevel.Error;
+        }
+
+        if (IsSwaggerEndpoint(ctx))
+        {
+            return LogEventLevel.Verbose;
+        }
+
+        if (ctx.Response.StatusCode > 499)
+        {
+            return LogEventLevel.Error;
+        }
+
+        return LogEventLevel.Information;
+    }
+
+    private static bool IsSwaggerEndpoint(HttpContext ctx)
+    {
+        var isSwagger = ctx.Request.Path.StartsWithSegments(new PathString("/swagger"), StringComparison.OrdinalIgnoreCase);
+
+        return isSwagger;
     }
 }
