@@ -89,6 +89,7 @@ public static class ConfigurationExtensions
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssemblies(typeof(ApiRoot).Assembly);
+
             cfg.AddOpenBehavior(typeof(LoggingBehaviour<,>));
             cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
             cfg.AddOpenBehavior(typeof(TransactionBehavior<,>));

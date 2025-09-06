@@ -12,7 +12,7 @@ public class CreateCustomerEndpoint : IMinimalEndpoint
     public IEndpointRouteBuilder MapEndpoint(IEndpointRouteBuilder builder)
     {
         builder.MapPost($"{EndpointConfig.BaseApiPath}/customers", async (
-                [FromServices] CreateCustomerRequest request,
+                [FromBody] CreateCustomerRequest request,
                 [FromServices] IMediator mediator,
                 CancellationToken cancellationToken) =>
             {
