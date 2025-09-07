@@ -21,6 +21,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Respawn" />
+    <PackageReference Include="Serilog.Sinks.XUnit" />
     <PackageReference Include="Testcontainers.MsSql" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />

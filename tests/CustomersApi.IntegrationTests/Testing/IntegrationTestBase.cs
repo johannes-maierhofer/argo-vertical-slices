@@ -28,7 +28,8 @@ public abstract class IntegrationTestBase(
 
     protected WebApplicationFactory<Program> CreateWebAppFactory()
     {
-        return new CustomWebApplicationFactory(database);
+        return new CustomWebApplicationFactory(database)
+            .WithTestLogging(output);
     }
 
     protected async Task AddEntityToDb<T>(T entity)
