@@ -1,14 +1,10 @@
 ﻿namespace Argo.VS.CustomersApi.IntegrationTests.Features.Customers;
 
 using System.Net;
-using System.Net.Http.Json;
 
 using Testing.Fixtures;
 
 using AwesomeAssertions;
-
-using CustomersApi.Features.Customers.Commands.CreateCustomer;
-using CustomersApi.Features.Customers.Common;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +12,8 @@ using Testing;
 using Testing.Builders;
 
 using Xunit.Abstractions;
+
+using ApiClient = Testing.ApiClients;
 
 public class CreateCustomerEndpointTests(
     DatabaseFixture database,
@@ -26,33 +24,27 @@ public class CreateCustomerEndpointTests(
     {
         // Arrange
         await using var factory = this.CreateWebAppFactory();
-        var client = factory.CreateClient();
-
-        var request = new CreateCustomerRequest(
-            "Ada",
-            "Lovelace",
-            "ada@example.com"
-        );
-
-        var url = "/api/v1/customers";
+        var client = factory.CreateApiClient();
 
         // Act
-        var response = await client.PostAsJsonAsync(url, request);
+        var request = new ApiClient.CreateCustomerRequest
+        {
+            FirstName = "Ada", LastName = "Lovelace", EmailAddress = "ada@example.com"
+        };
+
+        var response = await client.CreateCustomerAsync(request);
 
         // Assert: Response
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        var customer = await response.Content.ReadFromJsonAsync<CustomerResponse>();
-        customer.Should().NotBeNull();
-        customer.FirstName.Should().Be(request.FirstName);
-        customer.LastName.Should().Be(request.LastName);
-        customer.EmailAddress.Should().Be(request.EmailAddress);
-        customer.Id.Should().NotBeEmpty();
+        response.Should().NotBeNull();
+        response.FirstName.Should().Be(request.FirstName);
+        response.LastName.Should().Be(request.LastName);
+        response.EmailAddress.Should().Be(request.EmailAddress);
+        response.Id.Should().NotBeEmpty();
 
         // Assert: Db
         await using var dbContext = this.CreateDbContext();
 
-        var customerFromDb = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == customer.Id);
+        var customerFromDb = await dbContext.Customers.FirstOrDefaultAsync(c => c.Id == response.Id);
         customerFromDb.Should().NotBeNull();
         customerFromDb.FirstName.Should().Be(request.FirstName);
         customerFromDb.LastName.Should().Be(request.LastName);
@@ -72,20 +64,22 @@ public class CreateCustomerEndpointTests(
         await this.AddEntityToDb(existingCustomer);
 
         await using var factory = this.CreateWebAppFactory();
-        var client = factory.CreateClient();
+        var client = factory.CreateApiClient();
 
-        var request = new CreateCustomerRequest(
-            "Another",
-            "User",
-            existingEmail
-        );
-
-        var url = "/api/v1/customers";
+        var request = new ApiClient.CreateCustomerRequest
+        {
+            FirstName = "Another",
+            LastName = "User",
+            EmailAddress = existingEmail
+        };
 
         // Act
-        var response = await client.PostAsJsonAsync(url, request);
+        var action = () => client.CreateCustomerAsync(request);
 
-        // Assert: Response
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        // Assert
+        var errorResult = await action.Should()
+            .ThrowAsync<ApiClient.ApiException<ApiClient.ProblemDetails>>();
+
+        errorResult.And.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
     }
 }

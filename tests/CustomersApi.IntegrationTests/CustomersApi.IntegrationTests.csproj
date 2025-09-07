@@ -11,7 +11,15 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Client">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="NSwag.ApiDescription.Client">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Respawn" />
     <PackageReference Include="Testcontainers.MsSql" />
     <PackageReference Include="xunit" />
@@ -24,6 +32,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CustomersApi\CustomersApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <OpenApiReference Include="..\..\src\CustomersApi\Swagger\v1\swagger.json">
+        <CodeGenerator>NSwagCSharp</CodeGenerator>
+        <Link>OpenAPIs\v1\swagger.json</Link>
+        <ClassName>CustomersApiClient</ClassName>
+        <OutputPath>../Testing/ApiClients/CustomersApiClient.g.cs</OutputPath>
+        <Namespace>Argo.VS.CustomersApi.IntegrationTests.Testing.ApiClients</Namespace>
+        <Options>/UseBaseUrl:false /GenerateClientInterfaces:true /GenerateNullableReferenceTypes:true /JsonLibrary:SystemTextJson /AnyType:System.Text.Json.JsonElement</Options>
+    </OpenApiReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Testing\ApiClients\" />
   </ItemGroup>
 
 </Project>
