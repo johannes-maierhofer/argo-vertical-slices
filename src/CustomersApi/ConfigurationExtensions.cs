@@ -1,11 +1,14 @@
 ﻿namespace Argo.VS.CustomersApi;
 
+using System;
+
 using Asp.Versioning;
 
 using Domain.Common.Events;
 
 using FluentValidation;
 
+using Infrastructure.Configuration;
 using Infrastructure.CQRS.Behaviors;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Interceptors;
@@ -34,7 +37,7 @@ public static class ConfigurationExtensions
             .AddHttpContextAccessor()
             .AddProblemDetails()
             .AddValidatorsFromAssembly(typeof(ApiRoot).Assembly)
-            .AddPersistence(builder.Configuration)
+            .AddPersistence(builder.Configuration, builder.Environment)
             .AddCustomMediatr()
             .AddCustomApiVersioning()
             .AddCustomSwagger(o =>
@@ -47,12 +50,12 @@ public static class ConfigurationExtensions
 
     public static WebApplication ConfigureApplication(this WebApplication app)
     {
-        app.UseCustomProblemDetails();
-
         app.UseSerilogRequestLogging(cfg =>
         {
             cfg.GetLevel = GetCustomLogEventLevel;
         });
+
+        app.UseCustomProblemDetails();
 
         app.UseHttpsRedirection();
 
@@ -85,7 +88,8 @@ public static class ConfigurationExtensions
 
     private static IServiceCollection AddPersistence(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IWebHostEnvironment environment)
     {
         services.AddScoped<IDomainEventPublisher, DomainEventPublisher>();
         services.AddScoped<ISaveChangesInterceptor, DomainEventDispatchingInterceptor>();
@@ -100,6 +104,11 @@ public static class ConfigurationExtensions
                 b => b.MigrationsAssembly(typeof(CustomerDbContext).Assembly.FullName));
 
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
+
+            if (environment.IsIntegrationTests())
+            {
+                options.EnableSensitiveDataLogging();
+            }
         });
 
         return services;
