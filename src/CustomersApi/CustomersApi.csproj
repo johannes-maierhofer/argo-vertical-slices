@@ -24,6 +24,12 @@
   <ItemGroup>
     <Folder Include="Infrastructure\Models\" />
     <Folder Include="Infrastructure\Persistence\Migrations\" />
+    <Folder Include="Swagger\v1\" />
   </ItemGroup>
+
+    <Target Name="OpenAPI" AfterTargets="Build" Condition="$(Configuration)=='Debug'">
+        <Exec Command="dotnet tool restore"></Exec>
+        <Exec Command="dotnet tool run swagger tofile --output Swagger/v1/swagger.json $(TargetPath) v1" ContinueOnError="false" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=SwaggerBuild" />
+    </Target>
 
 </Project>
