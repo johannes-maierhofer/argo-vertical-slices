@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 
-public class CustomWebApplicationFactory(DatabaseFixture database) : WebApplicationFactory<Program>
+public class CustomWebApplicationFactory(DatabaseFixture database) : WebApplicationFactory<ApiRoot>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
