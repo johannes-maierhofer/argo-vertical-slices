@@ -30,13 +30,13 @@ public static class WebApplicationFactoryExtensions
                         .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Query", LogEventLevel.Information)
 
                         // see https://github.com/dotnet/aspnetcore/issues/46280
-                        .MinimumLevel.Override("Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware", LogEventLevel.Fatal);
+                        .MinimumLevel.Override("Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware", LogEventLevel.Fatal)
 
                         // Enrichers
-                        cfg.Enrich.FromLogContext();
-                        
-                    // write to test output via Serilog.Sinks.XUnit
-                    cfg.WriteTo.TestOutput(output);
+                        .Enrich.FromLogContext()
+
+                        // write to test output via Serilog.Sinks.XUnit
+                        .WriteTo.TestOutput(output);
                 });
             });
         });

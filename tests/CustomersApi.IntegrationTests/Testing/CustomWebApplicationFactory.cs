@@ -8,10 +8,15 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 
-public class CustomWebApplicationFactory(DatabaseFixture database) : WebApplicationFactory<ApiRoot>
+using Serilog;
+using Serilog.Events;
+
+using Xunit.Abstractions;
+
+public class CustomWebApplicationFactory(
+    DatabaseFixture database,
+    ITestOutputHelper output) : WebApplicationFactory<ApiRoot>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -29,8 +34,24 @@ public class CustomWebApplicationFactory(DatabaseFixture database) : WebApplicat
 
         builder.ConfigureTestServices(services =>
         {
-            // remove Background services
-            services.RemoveAll(typeof(IHostedService));
+            services.AddSerilog(cfg =>
+            {
+                // customize log levels
+                cfg.MinimumLevel.Is(LogEventLevel.Debug)
+                    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+                    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Information)
+                    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Query", LogEventLevel.Information)
+
+                    // see https://github.com/dotnet/aspnetcore/issues/46280
+                    .MinimumLevel.Override("Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware", LogEventLevel.Fatal)
+
+                    // Enrichers
+                    .Enrich.FromLogContext()
+
+                    // write to test output via Serilog.Sinks.XUnit
+                    .WriteTo.TestOutput(output);
+            });
         });
     }
 }
