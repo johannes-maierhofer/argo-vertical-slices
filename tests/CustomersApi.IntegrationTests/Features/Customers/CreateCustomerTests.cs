@@ -14,7 +14,7 @@ public class CreateCustomerEndpointTests(
     CustomWebApplicationFactory factory) : IClassFixture<CustomWebApplicationFactory>
 {
     [Fact]
-    public async Task CreateCustomers_WhenRequestIsValid_ShouldReturnOkWithCustomerResponse()
+    public async Task CreateCustomer_WhenRequestIsValid_ShouldReturnOkWithCustomerResponse()
     {
         // Arrange
         var client = factory.CreateClient();
