@@ -13,7 +13,7 @@ public abstract class IntegrationTestBase(
     ITestOutputHelper output)
     : IAsyncLifetime
 {
-    public ITestOutputHelper Output { get; } = output;
+    protected ITestOutputHelper Output { get; } = output;
 
     public async Task InitializeAsync()
     {
@@ -26,10 +26,9 @@ public abstract class IntegrationTestBase(
         return Task.CompletedTask;
     }
 
-    protected WebApplicationFactory<Program> CreateWebAppFactory()
+    protected WebApplicationFactory<ApiRoot> CreateWebAppFactory()
     {
-        return new CustomWebApplicationFactory(database)
-            .WithTestLogging(output);
+        return new CustomWebApplicationFactory(database, this.Output);
     }
 
     protected async Task AddEntityToDb<T>(T entity)

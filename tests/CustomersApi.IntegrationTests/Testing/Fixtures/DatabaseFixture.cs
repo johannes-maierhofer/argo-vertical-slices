@@ -16,7 +16,7 @@ public class DatabaseFixture : IAsyncLifetime
     private readonly MsSqlContainer _mssqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
         .WithReuse(true)
-        .WithLabel("reuse-id", "BuildingBlocksDemoDb")
+        .WithLabel("reuse-id", "VsCustomerTestDb")
         .Build();
 
     private Respawner _respawner = null!;
@@ -29,7 +29,7 @@ public class DatabaseFixture : IAsyncLifetime
 
         var builder = new SqlConnectionStringBuilder(_mssqlContainer.GetConnectionString())
         {
-            InitialCatalog = "VsDemoTestDb"
+            InitialCatalog = "VsCustomerTestDb"
         };
 
         this.ConnectionString = builder.ConnectionString;

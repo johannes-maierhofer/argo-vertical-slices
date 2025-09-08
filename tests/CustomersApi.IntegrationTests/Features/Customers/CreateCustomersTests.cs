@@ -20,7 +20,7 @@ public class CreateCustomerEndpointTests(
     ITestOutputHelper output) : IntegrationTestBase(database, output)
 {
     [Fact]
-    public async Task CreateCustomers_WhenRequestIsValid_ShouldReturnOkWithCustomerResponse()
+    public async Task CreateCustomer_WhenRequestIsValid_ShouldReturnOkWithCustomerResponse()
     {
         // Arrange
         await using var factory = this.CreateWebAppFactory();
@@ -52,7 +52,7 @@ public class CreateCustomerEndpointTests(
     }
 
     [Fact]
-    public async Task CreateCustomers_WhenEmailAlreadyExists_ShouldReturnBadRequest()
+    public async Task CreateCustomer_WhenEmailAlreadyExists_ShouldReturnBadRequest()
     {
         // Arrange
         const string existingEmail = "existing-email@test.com";

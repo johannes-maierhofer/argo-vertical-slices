@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 public static class WebApplicationFactoryExtensions
 {
-    public static WebApplicationFactory<Program> WithTestLogging(
+    public static WebApplicationFactory<ApiRoot> WithTestLogging(
         this CustomWebApplicationFactory factory,
         ITestOutputHelper output)
     {
@@ -30,19 +30,19 @@ public static class WebApplicationFactoryExtensions
                         .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Query", LogEventLevel.Information)
 
                         // see https://github.com/dotnet/aspnetcore/issues/46280
-                        .MinimumLevel.Override("Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware", LogEventLevel.Fatal);
+                        .MinimumLevel.Override("Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware", LogEventLevel.Fatal)
 
                         // Enrichers
-                        cfg.Enrich.FromLogContext();
-                        
-                    // write to test output via Serilog.Sinks.XUnit
-                    cfg.WriteTo.TestOutput(output);
+                        .Enrich.FromLogContext()
+
+                        // write to test output via Serilog.Sinks.XUnit
+                        .WriteTo.TestOutput(output);
                 });
             });
         });
     }
 
-    public static CustomersApiClient CreateApiClient(this WebApplicationFactory<Program> factory)
+    public static CustomersApiClient CreateApiClient(this WebApplicationFactory<ApiRoot> factory)
     {
         var httpClient = factory
             .CreateClient();
