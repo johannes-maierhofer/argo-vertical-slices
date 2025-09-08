@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 public static class WebApplicationFactoryExtensions
 {
-    public static WebApplicationFactory<Program> WithTestLogging(
+    public static WebApplicationFactory<ApiRoot> WithTestLogging(
         this CustomWebApplicationFactory factory,
         ITestOutputHelper output)
     {
@@ -42,7 +42,7 @@ public static class WebApplicationFactoryExtensions
         });
     }
 
-    public static CustomersApiClient CreateApiClient(this WebApplicationFactory<Program> factory)
+    public static CustomersApiClient CreateApiClient(this WebApplicationFactory<ApiRoot> factory)
     {
         var httpClient = factory
             .CreateClient();

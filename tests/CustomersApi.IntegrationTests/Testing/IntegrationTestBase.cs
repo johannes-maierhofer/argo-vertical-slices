@@ -26,7 +26,7 @@ public abstract class IntegrationTestBase(
         return Task.CompletedTask;
     }
 
-    protected WebApplicationFactory<Program> CreateWebAppFactory()
+    protected WebApplicationFactory<ApiRoot> CreateWebAppFactory()
     {
         return new CustomWebApplicationFactory(database)
             .WithTestLogging(output);
