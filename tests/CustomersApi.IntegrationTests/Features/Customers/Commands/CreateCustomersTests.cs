@@ -1,4 +1,4 @@
-﻿namespace Argo.VS.CustomersApi.IntegrationTests.Features.Customers;
+﻿namespace Argo.VS.CustomersApi.IntegrationTests.Features.Customers.Commands;
 
 using System.Net;
 
