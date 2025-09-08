@@ -11,13 +11,14 @@ public class UpdateCustomerEndpoint : IMinimalEndpoint
 {
     public IEndpointRouteBuilder MapEndpoint(IEndpointRouteBuilder builder)
     {
-        builder.MapPut($"{EndpointConfig.BaseApiPath}/customers", async (
+        builder.MapPut($"{EndpointConfig.BaseApiPath}/customers/{{id:guid}}", async (
+                [FromRoute] Guid id,
                 [FromBody] UpdateCustomerRequest request,
                 [FromServices] IMediator mediator,
                 CancellationToken cancellationToken) =>
             {
                 var command = new UpdateCustomerCommand(
-                    request.Id,
+                    id,
                     request.FirstName,
                     request.LastName,
                     request.EmailAddress);
@@ -28,9 +29,10 @@ public class UpdateCustomerEndpoint : IMinimalEndpoint
             })
             .WithName("UpdateCustomer")
             .WithSummary("Update customer")
-            .WithDescription("Update customer")
+            .WithDescription("Update a customer by ID")
             .Produces<CustomerResponse>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
             .WithOpenApi()
             .WithApiVersionSet(builder.NewApiVersionSet("Customers").Build())
             .HasApiVersion(1.0);
@@ -40,7 +42,6 @@ public class UpdateCustomerEndpoint : IMinimalEndpoint
 }
 
 public record UpdateCustomerRequest(
-    Guid Id,
     string FirstName,
     string LastName,
     string EmailAddress
