@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 
 public static class WebApplicationFactoryExtensions
 {
-    public static CustomersApiClient CreateApiClient(this WebApplicationFactory<Program> factory)
+    public static CustomersApiClient CreateApiClient(this WebApplicationFactory<ApiRoot> factory)
     {
         var httpClient = factory
             .CreateClient();
