@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 using Serilog;
 using Serilog.Events;
@@ -34,6 +36,9 @@ public class CustomWebApplicationFactory(
 
         builder.ConfigureTestServices(services =>
         {
+            // remove all background services
+            services.RemoveAll(typeof(IHostedService));
+
             services.AddSerilog(cfg =>
             {
                 // customize log levels

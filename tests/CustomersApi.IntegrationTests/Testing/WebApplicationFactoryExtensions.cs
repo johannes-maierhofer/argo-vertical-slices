@@ -4,6 +4,9 @@ using ApiClients;
 
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.VisualStudio.TestPlatform.TestHost;
 
 using Serilog;
 using Serilog.Events;
@@ -48,5 +51,20 @@ public static class WebApplicationFactoryExtensions
             .CreateClient();
 
         return new CustomersApiClient(httpClient);
+    }
+
+    public static WebApplicationFactory<Program> WithScopedService<TService>(
+        this WebApplicationFactory<Program> factory,
+        TService service)
+        where TService : class
+    {
+        return factory.WithWebHostBuilder(b =>
+        {
+            b.ConfigureTestServices(s =>
+            {
+                s.RemoveAll<TService>();         // remove previous registrations
+                s.AddScoped(_ => service);       // use your instance for the scope
+            });
+        });
     }
 }
